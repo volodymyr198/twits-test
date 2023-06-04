@@ -10,5 +10,13 @@ export const fetchUsers = async page => {
         console.log(error.message);
     }
 };
-
+export const updateUser = async (id, followers) => {
+    try {
+        await axios.put(`/${id}`, {
+            followers,
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 
