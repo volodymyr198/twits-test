@@ -4,6 +4,7 @@ import * as Scroll from 'react-scroll';
 
 import { Filter } from '../../components/Filter/Filter';
 import { Card } from '../../components/Card/Card';
+import {Loading} from '../../components/Loading/Loading';
 import { fetchUsers, updateUser } from '../../api/users';
 import css from './Cards.module.css';
 
@@ -14,6 +15,7 @@ export const Cards = () => {
     const [followStatus, setFollowStatus] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef(Scroll.animateScroll);
+    const [filterValue, setFilterValue] = useState('all');
 
     useEffect(() => {
         const getUsers = async page => {
@@ -88,25 +90,26 @@ export const Cards = () => {
         [followStatus, saveFollowStatusToLocalStorage]
     );
 
-    const filteredUsers = useMemo(
-        filterValue => {
-            if (filterValue === 'all') {
-                return users;
-            }
-            if (filterValue === 'follow') {
-                return users.filter(user => !followStatus[user.id]);
-            }
-            if (filterValue === 'followings') {
-                return users.filter(user => followStatus[user.id]);
-            }
+    const filteredUsers = useMemo(() => {
+        if (filterValue === 'all') {
             return users;
-        },
-        [followStatus, users]
-    );
+        }
+        if (filterValue === 'follow') {
+            return users.filter(user => !followStatus[user.id]);
+        }
+        if (filterValue === 'followings') {
+            return users.filter(user => followStatus[user.id]);
+        }
+        return users;
+    }, [filterValue, followStatus, users]);
+
+    const handleChangeValue = e => {
+        setFilterValue(e.target.value);
+    };
 
     return (
         <>
-            <Filter filteredUsers={filteredUsers} />
+            <Filter handleChangeValue={handleChangeValue} filterValue={filterValue} />
             <ul className={css.userCards}>
                 {filteredUsers.length > 0 ? (
                     filteredUsers.map(item => (
@@ -118,11 +121,11 @@ export const Cards = () => {
                         />
                     ))
                 ) : (
-                    <p style={{ color: 'red', fontSize: '32px', fontWeight: 'bold' }}>LOADING...</p>
+                    <Loading />
                 )}
             </ul>
             {users.length > 0 && isLoading ? (
-                <p style={{ color: 'red', fontSize: '32px', fontWeight: 'bold' }}>LOADING...</p>
+                <Loading />
             ) : (
                 <button
                     className={css.loadMoreBtn}

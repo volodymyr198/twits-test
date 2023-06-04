@@ -1,16 +1,10 @@
-import React, { useState } from 'react';
+import { PropTypes } from 'prop-types';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import css from './Filter.module.css';
 
-export const Filter = ( {filteredUsers} ) => {
-    const [filterValue, setFilterValue] = useState('all');
-
-    const handleChangeValue = e => {
-        setFilterValue(e.target.value);
-        // filteredUsers(filterValue);
-    };
-    console.log(filterValue);
+export const Filter = ({ handleChangeValue, filterValue }) => {
     return (
         <div className={css.wrapper}>
             <Link to={'/'} className={css.link}>
@@ -26,4 +20,9 @@ export const Filter = ( {filteredUsers} ) => {
             </label>
         </div>
     );
+};
+
+Filter.propTypes = {
+    handleChangeValue: PropTypes.func.isRequired,
+    filterValue: PropTypes.string.isRequired,
 };

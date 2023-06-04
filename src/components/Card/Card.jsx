@@ -1,11 +1,11 @@
-import React from 'react'
+import { PropTypes } from 'prop-types';
+import React from 'react';
 
 import logo from '../../image/logo.png';
 import pictures from '../../image/picture.png';
-import css from "./Card.module.css"
+import css from './Card.module.css';
 
 export const Card = ({ item, followStatus, toggle }) => {
-    
     const { avatar, tweets, followers, id } = item;
 
     return (
@@ -30,4 +30,15 @@ export const Card = ({ item, followStatus, toggle }) => {
             </div>
         </li>
     );
+};
+
+Card.propTypes = {
+    item: PropTypes.shape({
+        avatar: PropTypes.string.isRequired,
+        tweets: PropTypes.number.isRequired,
+        followers: PropTypes.number.isRequired,
+        id: PropTypes.number.isRequired,
+    }).isRequired,
+    followStatus: PropTypes.bool.isRequired,
+    toggle: PropTypes.func.isRequired,
 };
