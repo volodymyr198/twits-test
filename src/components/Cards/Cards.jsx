@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
 import * as Scroll from 'react-scroll';
 
-import logo from '../../image/logo.png';
-import pictures from '../../image/picture.png';
+import { Filter } from '../../components/Filter/Filter';
+import { Card } from '../../components/Card/Card';
 import { fetchUsers, updateUser } from '../../api/users';
 import css from './Cards.module.css';
 
@@ -12,11 +12,13 @@ export const Cards = () => {
     const [page, setPage] = useState(1);
     const [noUsers, setNoUsers] = useState(false);
     const [followStatus, setFollowStatus] = useState({});
-    const scroll = Scroll.animateScroll;
+    const [isLoading, setIsLoading] = useState(false);
+    const scrollRef = useRef(Scroll.animateScroll);
 
     useEffect(() => {
         const getUsers = async page => {
             try {
+                setIsLoading(true);
                 const data = await fetchUsers(page);
 
                 if (data.length === 0) {
@@ -28,12 +30,13 @@ export const Cards = () => {
             } catch (error) {
                 toast.error(error.message);
             } finally {
-                scroll.scrollMore(300, {});
+                setIsLoading(false);
+                scrollRef.current.scrollMore(300, {});
             }
         };
 
         getUsers(page);
-    }, [page, scroll]);
+    }, [page]);
 
     useEffect(() => {
         const storedFollowStatus = localStorage.getItem('followStatus');
@@ -46,79 +49,81 @@ export const Cards = () => {
             });
             setFollowStatus(initialFollowStatus);
         }
-    }, [users]);
+    }, []);
 
-    const saveFollowStatusToLocalStorage = followStatus => {
+    const saveFollowStatusToLocalStorage = useCallback(followStatus => {
         localStorage.setItem('followStatus', JSON.stringify(followStatus));
-    };
+    }, []);
 
-    const toggle = async (id, followers) => {
-        try {
-            const newFollowStatus = { ...followStatus };
-            if (newFollowStatus[id]) {
-                await updateUser(id, followers - 1);
-                newFollowStatus[id] = false;
-            } else {
-                await updateUser(id, followers + 1);
-                newFollowStatus[id] = true;
+    const toggle = useCallback(
+        async (id, followers) => {
+            try {
+                const newFollowStatus = { ...followStatus };
+                const updatedFollowers = newFollowStatus[id] ? followers - 1 : followers + 1;
+                setIsLoading(true);
+                await updateUser(id, updatedFollowers);
+                newFollowStatus[id] = !newFollowStatus[id];
+                setFollowStatus(newFollowStatus);
+                saveFollowStatusToLocalStorage(newFollowStatus);
+
+                setUsers(prevUsers =>
+                    prevUsers.map(user => {
+                        if (user.id === id) {
+                            return {
+                                ...user,
+                                followers: newFollowStatus[id]
+                                    ? user.followers + 1
+                                    : user.followers - 1,
+                            };
+                        }
+                        return user;
+                    })
+                );
+            } catch (error) {
+                toast.error(error.message);
+            } finally {
+                setIsLoading(false);
             }
-            setFollowStatus(newFollowStatus);
-            saveFollowStatusToLocalStorage(newFollowStatus);
+        },
+        [followStatus, saveFollowStatusToLocalStorage]
+    );
 
-            const updatedUsers = users.map(user => {
-                if (user.id === id) {
-                    return {
-                        ...user,
-                        followers: newFollowStatus[id] ? user.followers + 1 : user.followers - 1,
-                    };
-                }
-                return user;
-            });
-            setUsers(updatedUsers);
-        } catch (error) {
-            toast.error(error.message);
-        }
-    };
+    const filteredUsers = useMemo(
+        filterValue => {
+            if (filterValue === 'all') {
+                return users;
+            }
+            if (filterValue === 'follow') {
+                return users.filter(user => !followStatus[user.id]);
+            }
+            if (filterValue === 'followings') {
+                return users.filter(user => followStatus[user.id]);
+            }
+            return users;
+        },
+        [followStatus, users]
+    );
 
     return (
         <>
+            <Filter filteredUsers={filteredUsers} />
             <ul className={css.userCards}>
-                {users.length > 0 ? (
-                    users.map(item => (
-                        <li className={css.userCard} key={item.id}>
-                            <div className={css.imgWrapper}>
-                                <img className={css.logo} src={logo} alt="logo" />
-                                <img className={css.picture} src={pictures} alt="pictures" />
-                                <div className={css.avatarWrapper}>
-                                    <img
-                                        className={css.userAvatar}
-                                        src={item.avatar}
-                                        alt="аватар пользователя"
-                                    />
-                                </div>
-                            </div>
-                            <div className={css.userInfo}>
-                                <p className={css.userText}>{item.tweets} tweets</p>
-                                <p className={css.userText}>
-                                    {item.followers.toLocaleString('en-US')} followers
-                                </p>
-                                <button
-                                    type="button"
-                                    className={`${css.btn} ${
-                                        followStatus[item.id] ? css.followingBtn : ''
-                                    }`}
-                                    onClick={() => toggle(item.id, item.followers)}
-                                >
-                                    {followStatus[item.id] ? 'Following' : 'Follow'}
-                                </button>
-                            </div>
-                        </li>
+                {filteredUsers.length > 0 ? (
+                    filteredUsers.map(item => (
+                        <Card
+                            key={item.id}
+                            item={item}
+                            followStatus={followStatus[item.id]}
+                            toggle={toggle}
+                        />
                     ))
                 ) : (
                     <p style={{ color: 'red', fontSize: '32px', fontWeight: 'bold' }}>LOADING...</p>
                 )}
             </ul>
-            {users.length > 0 && (
+            {users.length > 0 && isLoading ? (
+                <p style={{ color: 'red', fontSize: '32px', fontWeight: 'bold' }}>LOADING...</p>
+            ) : (
                 <button
                     className={css.loadMoreBtn}
                     type="button"
