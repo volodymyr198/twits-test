@@ -37,8 +37,8 @@ Card.propTypes = {
         avatar: PropTypes.string.isRequired,
         tweets: PropTypes.number.isRequired,
         followers: PropTypes.number.isRequired,
-        id: PropTypes.number.isRequired,
+        id: PropTypes.string.isRequired,
     }).isRequired,
-    followStatus: PropTypes.bool.isRequired,
+    followStatus: PropTypes.bool,
     toggle: PropTypes.func.isRequired,
 };
