@@ -4,15 +4,17 @@ import { Link } from 'react-router-dom';
 import { MainContainer } from '../../components/MainContainer/MainContainer';
 import css from "./HomePage.module.css"
 
-export const HomePage = () => {
+const HomePage = () => {
     return (
         <MainContainer>
             <h1 className={css.title}>Test task from GoIT</h1>
-            <h2>
+            
                 <Link to="/tweets" className={css.link}>
                     Go to Tweet Cards
                 </Link>
-            </h2>
+            
         </MainContainer>
     );
 };
+
+export default HomePage;

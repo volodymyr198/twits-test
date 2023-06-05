@@ -4,10 +4,12 @@ import { MainContainer } from '../../components/MainContainer/MainContainer';
 import { Cards } from '../../components/Cards/Cards';
 
 
-export const TweetsPage = () => {
+const TweetsPage = () => {
     return (
         <MainContainer>
             <Cards/>
         </MainContainer>
     );
 };
+
+export default TweetsPage;

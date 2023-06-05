@@ -1,6 +1,6 @@
 <h1>Task - Tweets-Test</h1>
 
-<h2>The goal:</h2> <h4>to create tweet cards and add interactivity when clicking on a button. </h4>
+<h2>The goal:</h2> <h3>to create tweet cards and add interactivity when clicking on a button. </h3>
 
 <h2>Terms of reference:</h2>
 <h3>1. According to the <a href="https://www.figma.com/file/zun1oP6NmS2Lmgbcj6e1IG/Test?type=design&node-id=0-1&t=5QvIS2OV8wwWGctR-0" target="_blank">layout</a>, you need to implement user cards.</h3> 
@@ -27,6 +27,6 @@
 </h3><br>
 
 <h2>The project was created using Create-React-App.</h2> 
-<h2>Made routing using React Router.</h2>
+<h2>Made routing using React Router with using lazy load.</h2>
 <h2>User data is stored on the backend created using the mockapi.io UI service.</h2>
 <h2>User filtering has been added to the completed terms of reference.</h2>
