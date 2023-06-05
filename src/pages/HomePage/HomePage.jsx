@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { MainContainer } from '../../components/MainContainer/MainContainer';
-import css from "../../components/NavBar/NavBar.module.css"
+import css from "./HomePage.module.css"
 
 export const HomePage = () => {
     return (

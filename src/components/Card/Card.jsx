@@ -25,7 +25,7 @@ export const Card = ({ item, followStatus, toggle }) => {
                     className={`${css.btn} ${followStatus ? css.followingBtn : ''}`}
                     onClick={() => toggle(id, followers)}
                 >
-                    {followStatus ? 'Following' : 'Follow'}
+                    <span className={css.b}>{followStatus ? 'Following' : 'Follow'}</span>
                 </button>
             </div>
         </li>
