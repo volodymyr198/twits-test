@@ -51,7 +51,7 @@ export const Cards = () => {
             });
             setFollowStatus(initialFollowStatus);
         }
-    }, []);
+    }, [users]);
 
     const saveFollowStatusToLocalStorage = useCallback(followStatus => {
         localStorage.setItem('followStatus', JSON.stringify(followStatus));

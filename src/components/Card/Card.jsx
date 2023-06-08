@@ -2,7 +2,6 @@ import { PropTypes } from 'prop-types';
 import React from 'react';
 
 import logo from '../../image/logo.png';
-import pictures from '../../image/picture.png';
 import css from './Card.module.css';
 
 export const Card = ({ item, followStatus, toggle }) => {
@@ -12,9 +11,8 @@ export const Card = ({ item, followStatus, toggle }) => {
         <li className={css.userCard}>
             <div className={css.imgWrapper}>
                 <img className={css.logo} src={logo} alt="logo" />
-                <img className={css.picture} src={pictures} alt="pictures" />
                 <div className={css.avatarWrapper}>
-                    <img className={css.userAvatar} src={avatar} alt="аватар пользователя" />
+                    {<img className={css.userAvatar} src={avatar} alt="аватар пользователя" width={"60px"}/>}
                 </div>
             </div>
             <div className={css.userInfo}>
